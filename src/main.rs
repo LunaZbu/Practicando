@@ -25,5 +25,6 @@ fn main() {
     } else {
         println!("La propina es menor a 500, la propina es del 10%");
         println!("El total seria: {}", total_con_propina);
+        println!("este es el cambio del codigo para ver como funciona con Git/Github")
     }
 }
