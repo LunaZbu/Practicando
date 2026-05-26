@@ -1,30 +1,79 @@
-use std::io;
-fn main() {
-    println!("Ingresa el total de la cuenta");
-    let mut total = String::new();
-    io::stdin().read_line(&mut total).unwrap();
-    println!("Total: {}", total.trim());
+use actix_files::Files;
+use actix_web::{get, App, HttpResponse, HttpServer};
+use local_ip_address::local_ip;
+use std::process::Command;
 
-    //Aqui se abrira una caja sorpresa en donde si el usuario escribe texto mostrara error
-    let cuenta: u32 = match total.trim().parse() {
-        Ok(numero) => numero,
-        Err(_) => {
-            println!("Error: el total ingresado no es un numero");
-            return; //aqui termina la caja
+#[get("/apagar")]
+async fn apagar_handler() -> HttpResponse {
+    println!("> Orden recibida: Apagar pantalla");
+    match Command::new("powershell")
+        .args([
+            "-Command",
+            "(Add-Type '[DllImport(\"user32.dll\")] public static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);' -Name MonitorControl -PassThru)::SendMessage(-1, 0x0112, 0xF170, 2)",
+        ])
+        .spawn()
+    {
+        Ok(_) => {
+            println!("> Comando apagar ejecutado exitosamente");
+            HttpResponse::Ok().body("Apagando pantalla")
         }
-    };
-
-    let propina: u32 = cuenta / 10;
-    let total_con_propina: u32 = cuenta + propina;
-
-    if cuenta >= 500 {
-        println!("La cuenta es mayor a 500, la propina es del 20%");
-        let propina_alta: u32 = cuenta / 5;
-        let total_con_propina_alta: u32 = cuenta + propina_alta;
-        println!("El total seria: {}", total_con_propina_alta);
-    } else {
-        println!("La propina es menor a 500, la propina es del 10%");
-        println!("El total seria: {}", total_con_propina);
-        println!("este es el cambio del codigo para ver como funciona con Git/Github")
+        Err(e) => {
+            eprintln!("> ERROR al apagar: {e}");
+            HttpResponse::InternalServerError().body(format!("Error: {e}"))
+        }
     }
+}
+
+#[get("/encender")]
+async fn encender_handler() -> HttpResponse {
+    println!("> Orden recibida: Encender pantalla");
+    match Command::new("powershell")
+        .args([
+            "-Command",
+            "$wsh = New-Object -ComObject Wscript.Shell; $wsh.SendKeys('{SHIFT}')",
+        ])
+        .spawn()
+    {
+        Ok(_) => {
+            println!("> Comando encender ejecutado exitosamente");
+            HttpResponse::Ok().body("Encendiendo pantalla")
+        }
+        Err(e) => {
+            eprintln!("> ERROR al encender: {e}");
+            HttpResponse::InternalServerError().body(format!("Error: {e}"))
+        }
+    }
+}
+
+#[get("/status")]
+async fn status_handler() -> HttpResponse {
+    HttpResponse::Ok().body("OK - Servidor funcionando")
+}
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    let port: u16 = std::env::var("PORT")
+        .unwrap_or_else(|_| "8080".to_string())
+        .parse()
+        .unwrap_or(8080);
+
+    let ip = local_ip().unwrap_or_else(|_| "127.0.0.1".parse().unwrap());
+
+    println!("===========================================");
+    println!("  >> matrixJP - Control Remoto v1.0");
+    println!("===========================================");
+    println!("  [!] Conectate desde tu telefono a:");
+    println!("  [!] http://{ip}:{port}");
+    println!("===========================================");
+
+    HttpServer::new(|| {
+        App::new()
+            .service(apagar_handler)
+            .service(encender_handler)
+            .service(status_handler)
+            .service(Files::new("/", "./static").index_file("index.html"))
+    })
+    .bind(("0.0.0.0", port))?
+    .run()
+    .await
 }

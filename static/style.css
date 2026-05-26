@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0a0a0a;
+    color: #00ff41;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    text-align: center;
+    padding: 40px;
+    border: 1px solid #008f11;
+    border-radius: 8px;
+    background: #0d0d0d;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.05);
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: #008f11;
+    font-size: 14px;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border: 1px solid #00ff41;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    background: transparent;
+    color: #00ff41;
+}
+
+.btn:hover {
+    background: #00ff41;
+    color: #0a0a0a;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn:disabled:hover {
+    background: transparent;
+    color: #00ff41;
+    box-shadow: none;
+}
+
+#status {
+    padding: 12px 20px;
+    border: 1px solid #008f11;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #00ff41;
+    background: rgba(0, 255, 65, 0.03);
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-sending {
+    border-color: #ffaa00 !important;
+    color: #ffaa00 !important;
+    animation: blink 1s infinite;
+}
+
+.status-ok {
+    border-color: #00ff41 !important;
+    color: #00ff41 !important;
+}
+
+.status-error {
+    border-color: #ff0033 !important;
+    color: #ff0033 !important;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
