@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .unwrap_or(8080);
 
-    let ip = local_ip().unwrap_or_else(|_| "127.0.0.1".parse().unwrap());
+    let ip = local_ip().unwrap_or_else(|_| "0.0.0.0".parse().unwrap());
 
     println!("===========================================");
     println!("  >> matrixJP - Control Remoto v1.0");
